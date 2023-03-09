@@ -1,8 +1,8 @@
 const RenderPosition = {
-  BEFOREBEGIN: "beforebegin",
-  AFTERBEGIN: "afterbegin",
-  BEFOREEND: "beforeend",
-  AFTEREND: "afterend",
+  BEFOREBEGIN: 'beforebegin',
+  AFTERBEGIN: 'afterbegin',
+  BEFOREEND: 'beforeend',
+  AFTEREND: 'afterend',
 };
 
 // Принцип работы прост:
@@ -10,7 +10,7 @@ const RenderPosition = {
 // 2. берём HTML в виде строки и вкладываем в этот div-блок, превращая в DOM-элемент
 // 3. возвращаем этот DOM-элемент
 const createElement = (template) => {
-  const newElement = document.createElement("div"); // 1
+  const newElement = document.createElement('div'); // 1
   newElement.innerHTML = template; // 2
 
   return newElement.firstElementChild; // 3
