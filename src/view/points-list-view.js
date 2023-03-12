@@ -2,7 +2,7 @@ import { createElement } from '../render';
 
 const createPointsListTemplate = () => '<ul class="trip-events__list">';
 
-export default class PointsList {
+export default class PointsListView {
   constructor() {
     this.element = null;
   }

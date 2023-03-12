@@ -164,7 +164,7 @@ const createNewPointTemplate = () =>
   </form>
 </li>`;
 
-export default class NewPoint {
+export default class NewPointView {
   constructor() {
     this.element = null;
   }
