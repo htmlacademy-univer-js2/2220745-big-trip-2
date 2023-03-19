@@ -165,20 +165,22 @@ const createNewPointTemplate = () =>
 </li>`;
 
 export default class NewPointView {
+  #element = null;
+
   constructor() {
-    this.element = null;
+    this.#element = null;
   }
 
-  getTemplate() {
+  get template() {
     return createNewPointTemplate();
   }
 
-  getElement() {
-    this.element = this.element || createElement(this.getTemplate());
-    return this.element;
+  get element() {
+    this.#element = this.#element || createElement(this.template);
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }

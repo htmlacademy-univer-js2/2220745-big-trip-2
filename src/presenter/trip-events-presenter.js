@@ -3,45 +3,70 @@ import EditPointView from '../view/edit-point-view';
 import PointsListView from '../view/points-list-view';
 import SortView from '../view/sort-view';
 import PointView from '../view/point-view';
-import OffersView from '../view/offer-view';
-import EditPointOfferView from '../view/edit-point-offer-view';
 
 export default class Trip {
-  constructor({ container }) {
-    this.component = new PointsListView();
-    this.container = container;
+  #pointsListComponent = new PointsListView();
+  #container = null;
+
+  #pointsModel = null;
+  #points = [];
+  #destinations = [];
+  #offersByType = [];
+
+  constructor(container, pointsModel) {
+    this.#container = container;
+    this.#pointsModel = pointsModel;
   }
 
-  init(pointsModel) {
-    [this.editPoint, ...this.points] = [...pointsModel.getPoints()];
-    this.destinations = [...pointsModel.getDestinations()];
-    this.offersByType = [...pointsModel.getOffersByType()];
+  #renderPoint(point) {
+    const pointElement = new PointView(point, this.#destinations, this.#offersByType);
+    const editFormElement = new EditPointView(point, this.#destinations, this.#offersByType);
 
-    render(new SortView(), this.container);
-    render(this.component, this.container);
+    const replacePointToForm = () => {
+      this.#pointsListComponent.element.replaceChild(editFormElement.element, pointElement.element);
+    };
 
-    let offerType = this.editPoint.type;
-    let offerIds = this.editPoint.offers;
-    let offers = this.offersByType.filter((offer) => offer.type === offerType)[0].offers;
-    this.editPoint = new EditPointView(this.editPoint, this.destinations);
-    render(this.editPoint, this.component.getElement());
-    for (const offer of offers) {
-      render(new EditPointOfferView(offer, offerIds.includes(offer.id)), this.editPoint.getElement().querySelector('.event__available-offers'));
-    }
+    const replaceFormToPoint = () => {
+      this.#pointsListComponent.element.replaceChild(pointElement.element, editFormElement.element);
+    };
 
-    for (let i = 0; i < this.points.length; i++) {
-      const newPoint = new PointView(this.points[i], this.destinations, this.offers, this.offersByType);
-      render(newPoint, this.component.getElement());
-
-      offerType = this.points[i].type;
-      offerIds = this.points[i].offers;
-      offers = this.offersByType.filter((offer) => offer.type === offerType)[0].offers;
-      for (const id of offerIds) {
-        const offer = offers.filter((off) => off.id === id)[0] || '';
-        if (offer !== '') {
-          render(new OffersView(offer), newPoint.getElement().querySelector('.event__selected-offers'));
-        }
+    const onEscKeyDown = (evt) => {
+      if (evt.key === 'Escape' || evt.key == 'Esc') {
+        evt.preventDefault();
+        replaceFormToPoint();
+        document.removeEventListener('keydown', onEscKeyDown);
       }
+    };
+
+    pointElement.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+      replacePointToForm();
+      document.addEventListener('keydown', onEscKeyDown);
+    });
+
+    editFormElement.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+      replaceFormToPoint();
+      document.removeEventListener('keydown', onEscKeyDown);
+    });
+
+    editFormElement.element.querySelector('.event__save-btn').addEventListener('click', (evt) => {
+      evt.preventDefault();
+      replaceFormToPoint();
+      document.removeEventListener('keydown', onEscKeyDown);
+    });
+
+    render(pointElement, this.#pointsListComponent.element);
+  }
+
+  init() {
+    this.#points = [...this.#pointsModel.points];
+    this.#destinations = [...this.#pointsModel.destinations];
+    this.#offersByType = [...this.#pointsModel.offersByType];
+
+    render(new SortView(), this.#container);
+    render(this.#pointsListComponent, this.#container);
+
+    for (let i = 0; i < this.#points.length; i++) {
+      this.#renderPoint(this.#points[i]);
     }
   }
 }
