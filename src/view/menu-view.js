@@ -1,8 +1,13 @@
 import { createElement } from '../render';
 
-const createPointsListTemplate = () => '<ul class="trip-events__list">';
+const createMenuTemplate = () =>
+  `<nav class="trip-controls__trip-tabs  trip-tabs">
+    <a class="trip-tabs__btn  trip-tabs__btn--active" href="#">Table</a>
+    <a class="trip-tabs__btn" href="#">Stats</a>
+  </nav>
+`;
 
-export default class PointsListView {
+export default class MenuView {
   #element = null;
 
   constructor() {
@@ -10,7 +15,7 @@ export default class PointsListView {
   }
 
   get template() {
-    return createPointsListTemplate();
+    return createMenuTemplate();
   }
 
   get element() {

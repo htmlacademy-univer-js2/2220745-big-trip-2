@@ -2,15 +2,31 @@ import dayjs from 'dayjs';
 import { humanizeDateTime, upperCaseFirst } from '../utils';
 import { createElement } from '../render';
 
-const createPointTemplate = (point, destinations) => {
+const createOffersTemplate = (offers, type, activeOffersIds) => {
+  const offersByType = offers.filter((offer) => offer.type === type)[0].offers;
+  return offersByType
+    .map((offer) => {
+      return activeOffersIds.includes(offer.id)
+        ? `<li class="event__offer">
+        <span class="event__offer-title">${offer.title}</span>
+        &plus;
+        &euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
+      </li>`.trim()
+        : '';
+    })
+    .join('\n');
+};
+
+const createPointTemplate = (point, destinations, offersByType) => {
   let { dateFrom, dateTo } = point;
-  const { basePrice, destination, isFavorite, type } = point;
+  const { basePrice, destination, isFavorite, offers, type } = point;
 
   dateFrom = dayjs(dateFrom);
   dateTo = dayjs(dateTo);
   const datetimeBetween = humanizeDateTime(dateFrom, dateTo);
-
   const destinationName = destinations[destination].name;
+
+  const activeOffersTemplate = createOffersTemplate(offersByType, type, offers);
 
   return `<li class="trip-events__item">
     <div class="event">
@@ -32,6 +48,7 @@ const createPointTemplate = (point, destinations) => {
       </p>
       <h4 class="visually-hidden">Offers:</h4>
       <ul class="event__selected-offers">
+      ${activeOffersTemplate}
       </ul>
       <button class="event__favorite-btn ${isFavorite ? 'event__favorite-btn--active' : ''}" type="button">
         <span class="visually-hidden">Add to favorite</span>
@@ -47,22 +64,28 @@ const createPointTemplate = (point, destinations) => {
 };
 
 export default class PointView {
-  constructor(point, destinations) {
-    this.point = point;
-    this.destinations = destinations;
-    this.element = null;
+  #point = null;
+  #destinations = null;
+  #offersByType = null;
+  #element = null;
+
+  constructor(point, destinations, offersByType) {
+    this.#point = point;
+    this.#destinations = destinations;
+    this.#offersByType = offersByType;
+    this.#element = null;
   }
 
-  getTemplate() {
-    return createPointTemplate(this.point, this.destinations);
+  get template() {
+    return createPointTemplate(this.#point, this.#destinations, this.#offersByType);
   }
 
-  getElement() {
-    this.element = this.element || createElement(this.getTemplate());
-    return this.element;
+  get element() {
+    this.#element = this.#element || createElement(this.template);
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }

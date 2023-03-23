@@ -2,14 +2,32 @@ import { createElement } from '../render';
 import { upperCaseFirst } from '../utils';
 import dayjs from 'dayjs';
 
-const createEditPointTemplate = (point, destinations) => {
+const createOffersTemplate = (offers, type, activeOffersIds) => {
+  const offersByType = offers.filter((offer) => offer.type === type)[0].offers;
+  console.log(offersByType);
+  return offersByType
+    .map((offer) => {
+      return `<div class="event__available-offers">
+    <div class="event__offer-selector">
+    <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" ${activeOffersIds.includes(offer.id) ? 'checked' : ''}>
+    <label class="event__offer-label" for="event-offer-luggage-1">
+      <span class="event__offer-title">${offer.title}</span>
+      &plus;&euro;&nbsp;
+      <span class="event__offer-price">${offer.price}</span>
+    </label>
+  </div>`.trim();
+    })
+    .join('\n');
+};
+
+const createEditPointTemplate = (point, destinations, offersByType) => {
   let { dateFrom, dateTo } = point;
-  const { basePrice, destination, type } = point;
+  const { basePrice, destination, type, offers } = point;
 
   dateFrom = dayjs(dateFrom);
   dateTo = dayjs(dateTo);
-
   const destinationObj = destinations[destination];
+  const offersTemplate = createOffersTemplate(offersByType, type, offers);
 
   return `
   <li class="trip-events__item">
@@ -116,7 +134,7 @@ const createEditPointTemplate = (point, destinations) => {
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
           <div class="event__available-offers">
-            
+            ${offersTemplate}
           </div>
         </section>
 
@@ -132,22 +150,28 @@ const createEditPointTemplate = (point, destinations) => {
 };
 
 export default class EditPointView {
-  constructor(point, destinations) {
-    this.point = point;
-    this.destinations = destinations;
-    this.element = null;
+  #point = null;
+  #destinations = null;
+  #offersByType = null;
+  #element = null;
+
+  constructor(point, destinations, offersByType) {
+    this.#point = point;
+    this.#destinations = destinations;
+    this.#offersByType = offersByType;
+    this.#element = null;
   }
 
-  getTemplate() {
-    return createEditPointTemplate(this.point, this.destinations);
+  get template() {
+    return createEditPointTemplate(this.#point, this.#destinations, this.#offersByType);
   }
 
-  getElement() {
-    this.element = this.element || createElement(this.getTemplate());
-    return this.element;
+  get element() {
+    this.#element = this.#element || createElement(this.template);
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }
