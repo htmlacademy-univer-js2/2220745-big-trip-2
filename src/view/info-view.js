@@ -1,4 +1,4 @@
-import { createElement } from '../render';
+import AbsractView from '../framework/view/abstract-view';
 
 const createInfoTemplate = () =>
   `<section class="trip-main__trip-info  trip-info">
@@ -14,23 +14,8 @@ const createInfoTemplate = () =>
   </section>
 `;
 
-export default class InfoView {
-  #element = null;
-
-  constructor() {
-    this.#element = null;
-  }
-
+export default class InfoView extends AbsractView {
   get template() {
     return createInfoTemplate();
-  }
-
-  get element() {
-    this.#element = this.#element || createElement(this.template);
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }
