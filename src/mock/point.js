@@ -1,20 +1,15 @@
 import { randomInteger } from '../utils';
+import dayjs from 'dayjs';
 
-const dates = [
-  '2019-07-10T21:53:56.845Z',
-  '2019-07-11T11:45:56.845Z',
-  '2019-07-15T12:35:56.845Z',
-  '2019-07-26T13:22:56.845Z',
-  '2019-08-01T16:41:56.845Z',
-  '2019-08-12T11:12:56.845Z',
-  '2019-08-14T09:22:56.845Z',
-];
+const dayjsTypes = ['d', 'h'];
+let currentDate = dayjs().add(randomInteger(-7, 7), dayjsTypes[randomInteger(0, 1)]);
 
 const types = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
 export const createPoint = (id) => {
-  const dateFrom = dates[id];
-  const dateTo = dates[id + 1];
+  const dateFrom = currentDate;
+  const dateTo = currentDate.add(randomInteger(2, 7), dayjsTypes[randomInteger(0, 1)]);
+  currentDate = dateTo;
   return {
     basePrice: randomInteger(500, 3000),
     dateFrom: dateFrom,

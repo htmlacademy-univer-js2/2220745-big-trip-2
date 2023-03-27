@@ -1,10 +1,11 @@
-import { render, RenderPosition } from '../framework/render';
+import { render, RenderPosition, replace } from '../framework/render';
 import EditPointView from '../view/edit-point-view';
 import PointsListView from '../view/points-list-view';
 import SortView from '../view/sort-view';
 import PointView from '../view/point-view';
 import EmptyPointsListView from '../view/empty-points-list-view';
 import InfoView from '../view/info-view';
+import FiltersView from '../view/filters-view';
 
 export default class Trip {
   #pointsListComponent = new PointsListView();
@@ -21,17 +22,6 @@ export default class Trip {
   }
 
   #renderPoint(point) {
-    const pointElement = new PointView(point, this.#destinations, this.#offersByType);
-    const editFormElement = new EditPointView(point, this.#destinations, this.#offersByType);
-
-    const replacePointToForm = () => {
-      this.#pointsListComponent.element.replaceChild(editFormElement.element, pointElement.element);
-    };
-
-    const replaceFormToPoint = () => {
-      this.#pointsListComponent.element.replaceChild(pointElement.element, editFormElement.element);
-    };
-
     const onEscKeyDown = (evt) => {
       if (evt.key === 'Escape' || evt.key == 'Esc') {
         evt.preventDefault();
@@ -40,20 +30,33 @@ export default class Trip {
       }
     };
 
-    pointElement.setEditClickHandler(() => {
-      replacePointToForm();
-      document.addEventListener('keydown', onEscKeyDown);
+    const pointElement = new PointView({
+      point: point,
+      destinations: this.#destinations,
+      offersByType: this.#offersByType,
+      editClick: () => {
+        replacePointToForm.call();
+        document.addEventListener('keydown', onEscKeyDown);
+      },
     });
 
-    editFormElement.setSaveClickHandler(() => {
-      replaceFormToPoint();
-      document.addEventListener('keydown', onEscKeyDown);
+    const editFormElement = new EditPointView({
+      point: point,
+      destinations: this.#destinations,
+      offersByType: this.#offersByType,
+      saveClick: () => {
+        replaceFormToPoint.call();
+        document.removeEventListener('keydown', onEscKeyDown);
+      },
     });
 
-    editFormElement.element.querySelector('.event__save-btn').addEventListener('click', (evt) => {
-      replaceFormToPoint();
-      document.removeEventListener('keydown', onEscKeyDown);
-    });
+    function replacePointToForm() {
+      replace(editFormElement, pointElement);
+    }
+
+    function replaceFormToPoint() {
+      replace(pointElement, editFormElement);
+    }
 
     render(pointElement, this.#pointsListComponent.element);
   }
@@ -66,7 +69,8 @@ export default class Trip {
     if (this.#points.length === 0) {
       render(new EmptyPointsListView(), this.#container);
     } else {
-      render(new InfoView(), document.querySelector('.trip-main'), RenderPosition.AFTERBEGIN);
+      render(new InfoView(this.#points, this.#destinations), document.querySelector('.trip-main'), RenderPosition.AFTERBEGIN);
+      render(new FiltersView(this.#points), document.querySelector('.trip-controls__filters'));
       render(new SortView(), this.#container);
       render(this.#pointsListComponent, this.#container);
 
