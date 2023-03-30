@@ -14,7 +14,7 @@ const BLANK_POINT = {
 };
 
 const createOffersTemplate = (offers, type, activeOffersIds) => {
-  const offersByType = offers.filter((offer) => offer.type === type)[0].offers;
+  const offersByType = offers.find((offer) => offer.type === type).offers;
   return offersByType
     .map((offer) => {
       return `
@@ -70,7 +70,6 @@ const createEditPointTemplate = (point, destinations, offersByType) => {
             <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
           </label>
           <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
-
           <div class="event__type-list">
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Event type</legend>
@@ -78,7 +77,6 @@ const createEditPointTemplate = (point, destinations, offersByType) => {
             </fieldset>
           </div>
         </div>
-
         <div class="event__field-group  event__field-group--destination">
           <label class="event__label  event__type-output" for="event-destination-1">
             ${upperCaseFirst(type)}
@@ -89,7 +87,6 @@ const createEditPointTemplate = (point, destinations, offersByType) => {
             ${destinationsTemplate}
           </datalist>
         </div>
-
         <div class="event__field-group  event__field-group--time">
           <label class="visually-hidden" for="event-start-time-1">From</label>
           <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time"
@@ -99,7 +96,6 @@ const createEditPointTemplate = (point, destinations, offersByType) => {
           <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time"
             value="${dateTo.format('DD/MM/YY HH:mm')}">
         </div>
-
         <div class="event__field-group  event__field-group--price">
           <label class="event__label" for="event-price-1">
             <span class="visually-hidden">Price</span>
@@ -107,7 +103,6 @@ const createEditPointTemplate = (point, destinations, offersByType) => {
           </label>
           <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
         </div>
-
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
         <button class="event__reset-btn" type="reset">Delete</button>
         <button class="event__rollup-btn" type="button">
@@ -117,12 +112,10 @@ const createEditPointTemplate = (point, destinations, offersByType) => {
       <section class="event__details">
         <section class="event__section  event__section--offers">
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-
           <div class="event__available-offers">
             ${offersTemplate}
           </div>
         </section>
-
         <section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
           <p class="event__destination-description">
@@ -139,13 +132,15 @@ export default class EditPointView extends AbsractView {
   #destinations = null;
   #offersByType = null;
 
+  #saveClick = null;
+
   constructor({ point = BLANK_POINT, destinations, offersByType, saveClick }) {
     super();
     this.#point = point;
     this.#destinations = destinations;
     this.#offersByType = offersByType;
 
-    this._callback.saveClick = saveClick;
+    this.#saveClick = saveClick;
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#saveClickHandler);
     this.element.querySelector('.event__save-btn').addEventListener('click', this.#saveClickHandler);
   }
@@ -156,6 +151,6 @@ export default class EditPointView extends AbsractView {
 
   #saveClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.saveClick();
+    this.#saveClick();
   };
 }
