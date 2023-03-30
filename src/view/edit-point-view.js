@@ -14,7 +14,7 @@ const BLANK_POINT = {
 };
 
 const createOffersTemplate = (offers, type, activeOffersIds) => {
-  const offersByType = offers.filter((offer) => offer.type === type)[0].offers;
+  const offersByType = offers.find((offer) => offer.type === type).offers;
   return offersByType
     .map((offer) => {
       return `
@@ -139,13 +139,15 @@ export default class EditPointView extends AbsractView {
   #destinations = null;
   #offersByType = null;
 
+  #saveClick = null;
+
   constructor({ point = BLANK_POINT, destinations, offersByType, saveClick }) {
     super();
     this.#point = point;
     this.#destinations = destinations;
     this.#offersByType = offersByType;
 
-    this._callback.saveClick = saveClick;
+    this.#saveClick = saveClick;
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#saveClickHandler);
     this.element.querySelector('.event__save-btn').addEventListener('click', this.#saveClickHandler);
   }
@@ -156,6 +158,6 @@ export default class EditPointView extends AbsractView {
 
   #saveClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.saveClick();
+    this.#saveClick();
   };
 }
