@@ -42,4 +42,10 @@ const updateItem = (items, update) => {
   return [...items.slice(0, index), update, ...items.slice(index + 1)];
 };
 
-export { randomInteger, humanizeDateTime, upperCaseFirst, isDateBefore, updateItem };
+const SortFuntions = {
+  DAY: (firstPoint, secondPoint) => firstPoint.dateFrom.diff(secondPoint.dateFrom),
+  TIME: (firstPoint, secondPoint) => secondPoint.dateFrom.diff(secondPoint.dateTo) - firstPoint.dateFrom.diff(firstPoint.dateTo),
+  PRICE: (firstPoint, secondPoint) => firstPoint.basePrice - secondPoint.basePrice,
+};
+
+export { randomInteger, humanizeDateTime, upperCaseFirst, isDateBefore, updateItem, SortFuntions };
