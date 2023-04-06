@@ -1,4 +1,5 @@
 import AbsractView from '../framework/view/abstract-view';
+import dayjs from 'dayjs';
 
 const createTripTitleInfo = (points, destinations) => {
   const destinationsOrder = [];
@@ -18,7 +19,7 @@ const createTripTitleInfo = (points, destinations) => {
 };
 
 const createDatesInfo = (points) => {
-  return `${points[0].dateFrom.format('MMM D')}&nbsp;&mdash;&nbsp;${points[points.length - 1].dateTo.format('MMM D')}`;
+  return `${dayjs(points[0].dateFrom).format('MMM D')}&nbsp;&mdash;&nbsp;${dayjs(points[points.length - 1].dateTo).format('MMM D')}`;
 };
 
 const createInfoTemplate = (points, destinations) => {
