@@ -12,8 +12,8 @@ export const createPoint = (id) => {
   currentDate = dateTo;
   return {
     basePrice: randomInteger(500, 3000),
-    dateFrom: dateFrom,
-    dateTo: dateTo,
+    dateFrom: new Date(dateFrom),
+    dateTo: new Date(dateTo),
     destination: randomInteger(0, 9),
     id: id,
     isFavorite: Boolean(randomInteger(0, 1)),
