@@ -11,7 +11,7 @@ const createOffers = () => {
   return offers;
 };
 
-export const createOfferByType = (i) => ({
+export const createOffersByType = (i) => ({
   type: offerTypes[i],
   offers: createOffers(),
 });
