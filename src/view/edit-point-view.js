@@ -191,7 +191,6 @@ export default class EditPointView extends AbstractStatefulView {
       defaultDate: this._state.dateFrom,
       onClose: this.#dateFromChangeHandler,
       enableTime: true,
-      time_24hr: true,
     });
   }
 
@@ -201,7 +200,6 @@ export default class EditPointView extends AbstractStatefulView {
       defaultDate: this._state.dateTo,
       onClose: this.#dateToChangeHandler,
       enableTime: true,
-      time_24hr: true,
     });
   }
 
