@@ -1,4 +1,5 @@
-import { SortType } from './const';
+import { FilterType, SortType } from './const';
+import dayjs from 'dayjs';
 
 const randomInteger = (min, max) => {
   const random = min + Math.random() * (max + 1 - min);
@@ -20,34 +21,39 @@ const humanizeDateTime = (dateFrom, dateTo) => {
 
   const datetimeBetween = dateTo.diff(dateFrom);
   if (datetimeBetween > oneDayInMilliseconds) {
-    return `${parseInt(datetimeBetween / oneDayInMilliseconds, 10)}D ${parseInt((datetimeBetween % oneDayInMilliseconds) / oneHourInMilliseconds, 10)}H ${
+    return `${parseInt(datetimeBetween / oneDayInMilliseconds, 10)}D ${parseInt(
+      (datetimeBetween % oneDayInMilliseconds) / oneHourInMilliseconds,
+      10
+    )}H ${parseInt(datetimeBetween % oneHourInMilliseconds, 10) / oneMinuteInMilliseconds}M`;
+  } else if (datetimeBetween > oneHourInMilliseconds) {
+    return `${parseInt((datetimeBetween % oneDayInMilliseconds) / oneHourInMilliseconds, 10)}H ${
       parseInt(datetimeBetween % oneHourInMilliseconds, 10) / oneMinuteInMilliseconds
     }M`;
-  } else if (datetimeBetween > oneHourInMilliseconds) {
-    return `${parseInt((datetimeBetween % oneDayInMilliseconds) / oneHourInMilliseconds, 10)}H ${parseInt(datetimeBetween % oneHourInMilliseconds, 10) / oneMinuteInMilliseconds}M`;
   } else {
     return `${parseInt(datetimeBetween % oneHourInMilliseconds, 10) / oneMinuteInMilliseconds}M`;
   }
 };
 
-const isDateBefore = (dateFrom, dateTo) => {
-  return dateTo.diff(dateFrom) > 0;
-};
+const isDateBefore = (dateFrom, dateTo) => dateTo.diff(dateFrom) > 0;
 
-const updateItem = (items, update) => {
-  const index = items.findIndex((item) => item.id === update.id);
-
-  if (index === -1) {
-    return items;
-  }
-
-  return [...items.slice(0, index), update, ...items.slice(index + 1)];
-};
-
-const SortFuntions = {
-  [SortType.DAY]: (firstPoint, secondPoint) => firstPoint.dateFrom.diff(secondPoint.dateFrom),
-  [SortType.TIME]: (firstPoint, secondPoint) => secondPoint.dateFrom.diff(secondPoint.dateTo) - firstPoint.dateFrom.diff(firstPoint.dateTo),
+const SortFunctions = {
+  [SortType.DAY]: (firstPoint, secondPoint) => dayjs(firstPoint.dateFrom).diff(dayjs(secondPoint.dateFrom)),
+  [SortType.TIME]: (firstPoint, secondPoint) =>
+    dayjs(secondPoint.dateFrom).diff(dayjs(secondPoint.dateTo)) -
+    dayjs(firstPoint.dateFrom).diff(dayjs(firstPoint.dateTo)),
   [SortType.PRICE]: (firstPoint, secondPoint) => firstPoint.basePrice - secondPoint.basePrice,
 };
 
-export { randomInteger, humanizeDateTime, upperCaseFirst, isDateBefore, updateItem, SortFuntions };
+const FilterFunctions = {
+  [FilterType.EVERYTHING]: () => true,
+  [FilterType.FUTURE]: (point) => {
+    const today = dayjs();
+    return !isDateBefore(point.dateTo, today);
+  },
+  [FilterType.PAST]: (point) => {
+    const today = dayjs();
+    return isDateBefore(point.dateTo, today);
+  },
+};
+
+export { randomInteger, humanizeDateTime, upperCaseFirst, isDateBefore, SortFunctions, FilterFunctions };
