@@ -9,7 +9,7 @@ const BLANK_POINT = {
   basePrice: 0,
   dateFrom: new Date(),
   dateTo: new Date(),
-  destination: 0,
+  destination: 1,
   id: 0,
   isFavorite: false,
   offers: [],
