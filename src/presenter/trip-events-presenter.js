@@ -1,11 +1,11 @@
 import { RenderPosition, render, remove } from '../framework/render';
-import PointsListView from '../view/points-list-view';
-import SortView from '../view/sort-view';
-import EmptyPointsListView from '../view/empty-points-list-view';
-import PointPresenter from './point-presenter';
 import { FilterFunctions, SortFunctions } from '../utils';
 import { SortType, UserAction, UpdateType, FilterType } from '../const';
 import NewPointPresenter from './new-point-presenter';
+import PointPresenter from './point-presenter';
+import PointsListView from '../view/points-list-view';
+import SortView from '../view/sort-view';
+import EmptyPointsListView from '../view/empty-points-list-view';
 import NewPointButtonView from '../view/new-point-button.view';
 import InfoView from '../view/info-view';
 import LoadingView from '../view/loading-view';
@@ -67,16 +67,31 @@ export default class Trip {
     this.#newPointPresenter.init();
   }
 
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleViewAction = async (actionType, updateType, update) => {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        this.#pointsModel.updatePoint(updateType, update);
+        this.#pointPresenter.get(update.id).setSaving();
+        try {
+          await this.#pointsModel.updatePoint(updateType, update);
+        } catch {
+          this.#pointPresenter.get(update.id).setAborting();
+        }
         break;
       case UserAction.ADD_POINT:
-        this.#pointsModel.addPoint(updateType, update);
+        this.#newPointPresenter.setSaving();
+        try {
+          await this.#pointsModel.addPoint(updateType, update);
+        } catch {
+          this.#newPointPresenter.setAborting();
+        }
         break;
       case UserAction.DELETE_POINT:
-        this.#pointsModel.deletePoint(updateType, update);
+        this.#pointPresenter.get(update.id).setDeleting();
+        try {
+          await this.this.#pointsModel.deletePoint(updateType, update);
+        } catch {
+          this.#pointPresenter.get(update.id).setAborting();
+        }
         break;
     }
   };
@@ -117,6 +132,7 @@ export default class Trip {
   #clearPointsList = () => {
     this.#pointPresenter.forEach((presenter) => presenter.destroy());
     this.#pointPresenter.clear();
+    this.#newPointPresenter.destroy();
     this.#clearInfo();
   };
 

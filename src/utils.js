@@ -30,7 +30,7 @@ const humanizeDateTime = (dateFrom, dateTo) => {
   }
 };
 
-const isDateBefore = (dateFrom, dateTo) => dateTo.diff(dateFrom) > 0;
+const isFirstDateBeforeSecond = (dateFrom, dateTo) => dayjs(dateTo).diff(dayjs(dateFrom)) > 0;
 
 const SortFunctions = {
   [SortType.DAY]: (firstPoint, secondPoint) => dayjs(firstPoint.dateFrom).diff(dayjs(secondPoint.dateFrom)),
@@ -44,12 +44,12 @@ const FilterFunctions = {
   [FilterType.EVERYTHING]: () => true,
   [FilterType.FUTURE]: (point) => {
     const today = dayjs();
-    return !isDateBefore(point.dateTo, today);
+    return !isFirstDateBeforeSecond(point.dateFrom, today);
   },
   [FilterType.PAST]: (point) => {
     const today = dayjs();
-    return isDateBefore(point.dateTo, today);
+    return isFirstDateBeforeSecond(point.dateTo, today);
   },
 };
 
-export { humanizeDateTime, upperCaseFirst, isDateBefore, SortFunctions, FilterFunctions };
+export { humanizeDateTime, upperCaseFirst, isFirstDateBeforeSecond, SortFunctions, FilterFunctions };
