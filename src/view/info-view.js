@@ -6,8 +6,9 @@ import { SortType } from '../const';
 const createTripTitleInfo = (points, destinations) => {
   const destinationsOrder = [];
   for (const point of points) {
-    if (destinationsOrder.length === 0 || destinations[point.destination].name !== destinationsOrder[destinationsOrder.length - 1]) {
-      destinationsOrder.push(destinations[point.destination].name);
+    const destinationName = destinations.find((destination) => destination.id === point.destination).name;
+    if (destinationsOrder.length === 0 || destinationName !== destinationsOrder[destinationsOrder.length - 1]) {
+      destinationsOrder.push(destinationName);
     }
   }
 
@@ -20,7 +21,10 @@ const createTripTitleInfo = (points, destinations) => {
   }
 };
 
-const createDatesInfo = (points) => `${dayjs(points[0].dateFrom).format('MMM D')}&nbsp;&mdash;&nbsp;${dayjs(points[points.length - 1].dateTo).format('MMM D')}`;
+const createDatesInfo = (points) =>
+  `${dayjs(points[0].dateFrom).format('MMM D')}&nbsp;&mdash;&nbsp;${dayjs(points[points.length - 1].dateTo).format(
+    'MMM D'
+  )}`;
 
 const createInfoTemplate = (points, destinations) => {
   const summaryPrice = points.reduce((currentValue, point) => point.basePrice + currentValue, 0);

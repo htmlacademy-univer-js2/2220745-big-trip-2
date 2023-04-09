@@ -24,7 +24,7 @@ const createPointTemplate = (point, destinations, offersByType) => {
   dateFrom = dayjs(dateFrom);
   dateTo = dayjs(dateTo);
   const datetimeBetween = humanizeDateTime(dateFrom, dateTo);
-  const destinationName = destinations[destination].name;
+  const destinationName = destinations.find((dest) => dest.id === destination).name;
 
   const activeOffersTemplate = createOffersTemplate(offersByType, type, offers);
 
