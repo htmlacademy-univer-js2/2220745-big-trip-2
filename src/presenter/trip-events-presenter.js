@@ -198,7 +198,7 @@ export default class Trip {
 
   #renderInfo = () => {
     if (this.#infoComponent === null) {
-      this.#infoComponent = new InfoView(this.#pointsModel.points, this.destinations);
+      this.#infoComponent = new InfoView(this.#pointsModel.points, this.destinations, this.offers);
     }
     render(this.#infoComponent, this.#menuContainer, RenderPosition.AFTERBEGIN);
   };
