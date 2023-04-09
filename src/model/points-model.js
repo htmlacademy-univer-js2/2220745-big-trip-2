@@ -51,7 +51,7 @@ export default class PointsModel extends Observable {
       this.#points = [...this.#points.slice(0, index), updatedPoint, ...this.#points.slice(index + 1)];
       this._notify(updateType, update);
     } catch {
-      throw new Error("Can't update task");
+      throw new Error('Can\'t update task');
     }
   }
 

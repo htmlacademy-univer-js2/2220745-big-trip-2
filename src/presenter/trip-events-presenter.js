@@ -34,12 +34,6 @@ export default class Trip {
     this.#menuContainer = menuContainer;
     this.#pointsModel = pointsModel;
     this.#filtersModel = filtersModel;
-    this.#newPointPresenter = new NewPointPresenter({
-      newPointContainer: this.#pointsListComponent.element,
-      pointsModel: pointsModel,
-      handleChangeData: this.#handleViewAction,
-      handleDestroy: this.#handleNewPointClose,
-    });
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
     this.#filtersModel.addObserver(this.#handleModelEvent);
@@ -99,6 +93,7 @@ export default class Trip {
       case UpdateType.INIT:
         this.#isLoading = false;
         remove(this.#loadingComponent);
+        this.#createNewPointPresenter();
         this.#renderNewPointButton();
         this.#renderPointsList();
         break;
@@ -195,5 +190,14 @@ export default class Trip {
   #clearInfo = () => {
     remove(this.#infoComponent);
     this.#infoComponent = null;
+  };
+
+  #createNewPointPresenter = () => {
+    this.#newPointPresenter = new NewPointPresenter({
+      newPointContainer: this.#pointsListComponent.element,
+      pointsModel: this.#pointsModel,
+      handleChangeData: this.#handleViewAction,
+      handleDestroy: this.#handleNewPointClose,
+    });
   };
 }

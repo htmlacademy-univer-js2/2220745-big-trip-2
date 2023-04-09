@@ -14,13 +14,21 @@ const BLANK_POINT = {
   isFavorite: false,
   offers: [],
   type: 'taxi',
+  isNewPoint: true,
 };
 
-const createOffersTemplate = (offers) =>
-  offers
+const createOffersTemplate = (offers) => {
+  if (offers.length === 0) {
+    return `
+    <section class="event__section  event__section--offers">
+      <div class="event__available-offers">
+      </div>
+    </section>`;
+  }
+  const offersTemplate = offers
     .map(
       (offer) => `
-        <div class="event__offer-selector">
+      <div class="event__offer-selector">
         <input class="event__offer-checkbox  visually-hidden" 
         id="event-offer-${offer.title}-1" type="checkbox" 
         name="event-offer-${offer.title}" ${offer.isChecked ? 'checked' : ''}>
@@ -31,7 +39,15 @@ const createOffersTemplate = (offers) =>
         </label>
       </div>`
     )
-    .join('\n');
+    .join('');
+  return `
+    <section class="event__section  event__section--offers">
+      <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+      <div class="event__available-offers">
+        ${offersTemplate}
+      </div>
+    </section>`;
+};
 
 const createTypesTemplate = (offersByType) => {
   const types = offersByType.map((type) => type.type);
@@ -47,8 +63,29 @@ const createTypesTemplate = (offersByType) => {
     .join('\n');
 };
 
+const createPicturesTemplate = ({ pictures }) =>
+  pictures.map((picture) => `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`).join('');
+
 const createDestinationsOptionsTemplate = (destinations) =>
   destinations.map((destination) => `<option value="${destination.name}">${destination.name}</option>`).join('\n');
+
+const createDestinationTemplate = ({ destination, isNewPoint }) => {
+  let picturesTemplate = '';
+  if (isNewPoint) {
+    picturesTemplate = createPicturesTemplate(destination);
+  }
+  return `
+  <section class="event__section  event__section--destination">
+  <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+  <p class="event__destination-description">${destination.description}.</p>
+
+  <div class="event__photos-container">
+    <div class="event__photos-tape">
+      ${picturesTemplate}
+    </div>
+  </div>
+</section>`;
+};
 
 const createEditPointTemplate = (point, destinations, offersByType) => {
   let { dateFrom, dateTo } = point;
@@ -59,7 +96,8 @@ const createEditPointTemplate = (point, destinations, offersByType) => {
 
   const offersTemplate = createOffersTemplate(offers);
   const typesTemplate = createTypesTemplate(offersByType);
-  const destinationsTemplate = createDestinationsOptionsTemplate(destinations);
+  const destinationsOptionsTemplate = createDestinationsOptionsTemplate(destinations);
+  const destinationTemplate = createDestinationTemplate(point);
 
   return `
   <li class="trip-events__item">
@@ -85,7 +123,7 @@ const createEditPointTemplate = (point, destinations, offersByType) => {
           <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination"
             value="${destination.name}" list="destination-list-1">
           <datalist id="destination-list-1">
-            ${destinationsTemplate}
+            ${destinationsOptionsTemplate}
           </datalist>
         </div>
         <div class="event__field-group  event__field-group--time">
@@ -111,18 +149,8 @@ const createEditPointTemplate = (point, destinations, offersByType) => {
         </button>
       </header>
       <section class="event__details">
-        <section class="event__section  event__section--offers">
-          <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-          <div class="event__available-offers">
-            ${offersTemplate}
-          </div>
-        </section>
-        <section class="event__section  event__section--destination">
-          <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-          <p class="event__destination-description">
-            ${destination.description}
-          </p>
-        </section>
+        ${offersTemplate}
+        ${destinationTemplate}
       </section>
     </form>
   </li>`;
@@ -267,11 +295,6 @@ export default class EditPointView extends AbstractStatefulView {
     if (chosenDestination) {
       this.updateElement({
         destination: chosenDestination,
-        isDesinationCorrect: true,
-      });
-    } else {
-      this.updateElement({
-        isDesinationCorrect: false,
       });
     }
   };
@@ -285,7 +308,6 @@ export default class EditPointView extends AbstractStatefulView {
         isChecked: point.offers.includes(offer.id),
       })),
     destination: destinations.find((destination) => destination.id === point.destination),
-    isDesinationCorrect: true,
   });
 
   static parseStateToPoint = (state) => {
@@ -295,7 +317,7 @@ export default class EditPointView extends AbstractStatefulView {
       offers: state.offers.filter((offer) => offer.isChecked).map((offer) => offer.id),
     };
 
-    delete point.isDesinationCorrect;
+    delete point.isNewPoint;
 
     return point;
   };
