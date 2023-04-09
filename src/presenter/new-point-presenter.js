@@ -25,7 +25,6 @@ export default class NewPointPresenter {
     if (this.#newPointComponent !== null) {
       return;
     }
-    console.log(this.#destinations);
     this.#newPointComponent = new EditPointView({
       destinations: this.#destinations,
       offersByType: this.#offers,
