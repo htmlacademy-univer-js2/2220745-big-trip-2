@@ -22,8 +22,7 @@
     "chartjs-plugin-datalabels": "0.7.0",
     "dayjs": "1.10.7",
     "flatpickr": "4.6.9",
-    "he": "1.2.0",
-    "nvm": "1.1.11"
+    "he": "1.2.0"
   },
   "devDependencies": {
     "@babel/core": "7.16.0",
@@ -37,9 +36,9 @@
     "eslint": "7.32.0",
     "eslint-config-htmlacademy": "5.0.0",
     "style-loader": "3.3.1",
-    "webpack": "^5.81.0",
+    "webpack": "5.81.0",
     "webpack-cli": "4.10.0",
-    "webpack-dev-server": "^4.13.3"
+    "webpack-dev-server": "4.13.3"
   },
   "engines": {
     "node": "18"
