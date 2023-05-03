@@ -23,8 +23,7 @@
     "dayjs": "1.10.7",
     "flatpickr": "4.6.9",
     "he": "1.2.0",
-    "node": "^18.16.0",
-    "nvm": "^0.0.4"
+    "nvm": "1.1.11"
   },
   "devDependencies": {
     "@babel/core": "7.16.0",
