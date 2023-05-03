@@ -22,15 +22,13 @@ const createTripTitleInfo = (points, destinations) => {
 };
 
 const createDatesInfo = (points) =>
-  `${dayjs(points[0].dateFrom).format('MMM D')}&nbsp;&mdash;&nbsp;${dayjs(points[points.length - 1].dateTo).format(
-    'MMM D'
-  )}`;
+  `${dayjs(points[0].dateFrom).format('MMM D')}&nbsp;&mdash;&nbsp;${dayjs(points[points.length - 1].dateTo).format('MMM D')}`;
 
 const getFullPointPrice = (point, offersByType) => {
   const offers = offersByType.find((offerByType) => offerByType.type === point.type).offers;
   const offersPrice = point.offers.reduce((currentValue, offer) => offers.find((off) => off.id === offer).price + currentValue, 0);
   return offersPrice + point.basePrice;
-}
+};
 
 const createInfoTemplate = (points, destinations, offersByType) => {
   const summaryPrice = points.reduce((currentValue, point) => getFullPointPrice(point, offersByType) + currentValue, 0);
