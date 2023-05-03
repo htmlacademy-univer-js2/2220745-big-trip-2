@@ -7,7 +7,7 @@ const createMenuTemplate = () =>
   </nav>
 `;
 
-export default class MenuView extends AbsractView {
+export default class NavigationView extends AbsractView {
   get template() {
     return createMenuTemplate();
   }

@@ -5,10 +5,10 @@ import FiltersView from '../view/filters-view';
 
 export default class FilterPresenter {
   #filtersContainer = null;
+  #filtersComponent = null;
+
   #filterModel = null;
   #pointsModel = null;
-
-  #filtersComponent = null;
 
   constructor({ filtersContainer, filterModel, pointsModel }) {
     this.#filtersContainer = filtersContainer;
