@@ -21,12 +21,16 @@ const createTripTitleInfo = (points, destinations) => {
 };
 
 const createDatesInfo = (points) =>
-  `${dayjs(points[0].dateFrom).format('MMM D')}&nbsp;&mdash;&nbsp;${dayjs(points[points.length - 1].dateTo).format(
-    'MMM D'
-  )}`;
+  `${dayjs(points[0].dateFrom).format('MMM D')}&nbsp;&mdash;&nbsp;${dayjs(points[points.length - 1].dateTo).format('MMM D')}`;
 
-const createInfoTemplate = (points, destinations) => {
-  const summaryPrice = points.reduce((currentValue, point) => point.basePrice + currentValue, 0);
+const getFullPointPrice = (point, offersByType) => {
+  const offers = offersByType.find((offerByType) => offerByType.type === point.type).offers;
+  const offersPrice = point.offers.reduce((currentValue, offer) => offers.find((off) => off.id === offer).price + currentValue, 0);
+  return offersPrice + point.basePrice;
+};
+
+const createInfoTemplate = (points, destinations, offersByType) => {
+  const summaryPrice = points.reduce((currentValue, point) => getFullPointPrice(point, offersByType) + currentValue, 0);
   const tripInfoTitle = createTripTitleInfo(points, destinations);
   const datesInfo = createDatesInfo(points);
   return `
@@ -46,14 +50,16 @@ const createInfoTemplate = (points, destinations) => {
 export default class InfoView extends AbsractView {
   #points = null;
   #destinations = null;
+  #offers = null;
 
-  constructor(points, destinations) {
+  constructor(points, destinations, offers) {
     super();
     this.#points = points.sort(SortFunctions[SortType.DAY]);
     this.#destinations = destinations;
+    this.#offers = offers;
   }
 
   get template() {
-    return createInfoTemplate(this.#points, this.#destinations);
+    return createInfoTemplate(this.#points, this.#destinations, this.#offers);
   }
 }
