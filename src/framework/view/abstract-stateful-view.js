@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import AbstractView from './abstract-view.js';
 
 /**
@@ -35,7 +34,7 @@ export default class AbstractStatefulView extends AbstractView {
    * @param {Object} update Объект с обновлённой частью состояния
    */
   _setState(update) {
-    this._state = structuredClone({ ...this._state, ...update });
+    this._state = structuredClone({...this._state, ...update});
   }
 
   /** Метод для перерисовки элемента */
@@ -45,6 +44,7 @@ export default class AbstractStatefulView extends AbstractView {
     this.removeElement();
 
     const newElement = this.element;
+
     parent.replaceChild(newElement, prevElement);
 
     this._restoreHandlers();
