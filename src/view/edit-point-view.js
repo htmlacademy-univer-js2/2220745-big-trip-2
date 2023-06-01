@@ -13,7 +13,6 @@ const BLANK_POINT = {
   isFavorite: false,
   offers: [],
   type: 'taxi',
-  isNewPoint: true,
 };
 
 const createOffersTemplate = (offers, isDisabled) => {
@@ -64,11 +63,9 @@ const createPicturesTemplate = ({ pictures }) =>
 const createDestinationsOptionsTemplate = (destinations) =>
   destinations.map((destination) => `<option value="${destination.name}">${destination.name}</option>`).join('\n');
 
-const createDestinationTemplate = ({ destination, isNewPoint }) => {
-  let picturesTemplate = '';
-  if (isNewPoint) {
-    picturesTemplate = createPicturesTemplate(destination);
-  }
+const createDestinationTemplate = ({ destination}) => {
+  const picturesTemplate = createPicturesTemplate(destination);
+
   return `
   <section class="event__section  event__section--destination">
   <h3 class="event__section-title  event__section-title--destination">Destination</h3>
@@ -271,7 +268,7 @@ export default class EditPointView extends AbstractStatefulView {
     const type = evt.target.value;
     this.updateElement({
       type: type,
-      offersObjects: this.#offersByType
+      offers: this.#offersByType
         .find((offer) => offer.type === type)
         .offers.map((offer) => ({ ...offer, isChecked: false })),
     });
@@ -324,7 +321,6 @@ export default class EditPointView extends AbstractStatefulView {
       offers: state.offers.filter((offer) => offer.isChecked).map((offer) => offer.id),
     };
 
-    delete point.isNewPoint;
     delete point.isDeleting;
     delete point.isDisabled;
     delete point.isSaving;

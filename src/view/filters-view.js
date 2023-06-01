@@ -38,11 +38,8 @@ export default class FiltersView extends AbsractView {
   }
 
   #filterChangeHandler = (evt) => {
-    if (evt.target.tagName === 'LABEL') {
-      const target = evt.target;
-      if (target.dataset.disabled === 'false') {
-        this.#filterChange(target.dataset.name);
-      }
+    if (evt.target.tagName === 'LABEL' && event.target.dataset.disabled === 'false') {
+      this.#filterChange(evt.target.dataset.name);
     }
   };
 }

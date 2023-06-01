@@ -1,3 +1,6 @@
+
+/* eslint-disable no-undef */
+/*eslint no-undef: "error"*/
 import AbstractView from './abstract-view.js';
 
 /**

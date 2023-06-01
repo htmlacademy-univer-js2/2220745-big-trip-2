@@ -9,6 +9,7 @@ import EmptyPointsListView from '../view/empty-points-list-view';
 import NewPointButtonView from '../view/new-point-button.view';
 import InfoView from '../view/info-view';
 import LoadingView from '../view/loading-view';
+import ErrorView from '../view/error-view';
 
 export default class Trip {
   #container = null;
@@ -17,6 +18,7 @@ export default class Trip {
   #pointsListComponent = new PointsListView();
   #emptyPointsListComponent = new EmptyPointsListView();
   #loadingComponent = new LoadingView();
+  #errorComponent = new ErrorView();
   #sortComponent = null;
   #newPointButtonComponent = null;
   #infoComponent = null;
@@ -109,9 +111,14 @@ export default class Trip {
       case UpdateType.INIT:
         this.#isLoading = false;
         remove(this.#loadingComponent);
-        this.#createNewPointPresenter();
-        this.#renderNewPointButton();
-        this.#renderPointsList();
+        if (this.#pointsModel.errored) {
+          this.#renderNewPointButton(true);
+          this.#renderError();
+        } else {
+          this.#createNewPointPresenter();
+          this.#renderNewPointButton(false);
+          this.#renderPointsList();
+        }
         break;
     }
   };
@@ -169,6 +176,10 @@ export default class Trip {
     render(this.#loadingComponent, this.#container);
   };
 
+  #renderError = () => {
+    render(this.#errorComponent, this.#container);
+  }
+
   #renderSort = () => {
     if (this.#sortComponent === null) {
       this.#sortComponent = new SortView(this.#handleSortButtonClick);
@@ -176,9 +187,9 @@ export default class Trip {
     render(this.#sortComponent, this.#container, RenderPosition.AFTERBEGIN);
   };
 
-  #renderNewPointButton = () => {
+  #renderNewPointButton = (isDisabled) => {
     if (this.#newPointButtonComponent === null) {
-      this.#newPointButtonComponent = new NewPointButtonView({ buttonClick: this.#handleNewPointButtonClick });
+      this.#newPointButtonComponent = new NewPointButtonView({ buttonClick: this.#handleNewPointButtonClick, isDisabled: isDisabled });
     }
     render(this.#newPointButtonComponent, this.#menuContainer, RenderPosition.BEFOREEND);
   };

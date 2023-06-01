@@ -7,6 +7,8 @@ export default class PointsModel extends Observable {
   #destinations = [];
   #offers = [];
 
+  errored = false;
+
   constructor({ pointsApiService }) {
     super();
     this.#pointsApiService = pointsApiService;
@@ -34,6 +36,7 @@ export default class PointsModel extends Observable {
       this.#points = [];
       this.#offers = [];
       this.#destinations = [];
+      this.errored = true;
     }
     this._notify(UpdateType.INIT);
   }
